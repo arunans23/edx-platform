@@ -13,22 +13,16 @@ class CatalogFixture(object):
     """
     Interface to set up mock responses from the Catalog stub server.
     """
-    def install_programs(self, programs):
+    def install_programs(self, data):
         """Set response data for the catalog's course run API."""
         key = 'catalog.programs'
 
-        requests.put(
-            '{}/set_config'.format(CATALOG_STUB_URL),
-            data={key: json.dumps(programs)},
-        )
-
-    def install_course_run(self, course_run):
-        """Set response data for the catalog's course run API."""
-        key = 'catalog.{}'.format(course_run['key'])
+        if isinstance(data, dict):
+            key += '.' + data['uuid']
 
         requests.put(
             '{}/set_config'.format(CATALOG_STUB_URL),
-            data={key: json.dumps(course_run)},
+            data={key: json.dumps(data)},
         )
 
 

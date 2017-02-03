@@ -137,39 +137,12 @@
 // UI: inputs
 .forum-new-post-form,
 .edit-post-form {
-  .post-type-input {
-    @extend %text-sr;
-  }
 
   .post-type-label {
-    @include margin(0, $baseline / 2, 0, 0);
-    @include white-button;
-    font-size: $forum-base-font-size;
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 0 $baseline;
-    height: 36px;
-    text-align: center;
+    @include margin(0, $baseline, 0, $baseline / 5);
     color: $gray-d3;
-    border: 1px solid $forum-color-border;
+    font-size: $forum-base-font-size;
     font-weight: 600;
-    line-height: 36px;
-
-    .icon {
-      @include margin-right($baseline/4);
-    }
-  }
-
-  .post-type-input:checked + .post-type-label {
-    border: none;
-    background-color: $forum-color-active-thread;
-    color: $forum-color-active-text;
-    background-image: none;
-    box-shadow: none;
-  }
-
-  .post-type-input:focus + .post-type-label {
-    box-shadow: 0 1px 1px rgba(0, 0,  0, 0.4) inset, 0 0 2px 2px $blue;
   }
 
   input[type=text].field-input {

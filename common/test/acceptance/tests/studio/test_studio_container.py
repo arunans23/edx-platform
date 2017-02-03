@@ -10,6 +10,7 @@ from common.test.acceptance.fixtures.course import XBlockFixtureDesc
 from common.test.acceptance.pages.studio.component_editor import ComponentEditorView, ComponentVisibilityEditorView
 from common.test.acceptance.pages.studio.container import ContainerPage
 from common.test.acceptance.pages.studio.html_component_editor import HtmlComponentEditorView
+from common.test.acceptance.pages.studio.move_xblock import MoveModalView
 from common.test.acceptance.pages.studio.utils import add_discussion, drag
 from common.test.acceptance.pages.lms.courseware import CoursewarePage
 from common.test.acceptance.pages.lms.staff_view import StaffPage
@@ -1136,3 +1137,117 @@ class ProblemCategoryTabsTest(ContainerBase):
             "Text Input with Hints and Feedback",
         ]
         self.assertEqual(page.get_category_tab_components('problem', 1), expected_components)
+
+
+@attr(shard=1)
+class MoveComponentTest(ContainerBase):
+    """
+    Tests of moving an XBlock to another XBlock.
+    """
+    def setUp(self, is_staff=True):
+        super(MoveComponentTest, self).setUp(is_staff=is_staff)
+        self.container = ContainerPage(self.browser, None)
+        self.move_modal_view = MoveModalView(self.browser)
+
+    def populate_course_fixture(self, course_fixture):
+        """
+        Sets up a course structure.
+        """
+        course_fixture.add_children(
+            XBlockFixtureDesc('chapter', 'Test Section').add_children(
+                XBlockFixtureDesc('sequential', 'Test Subsection').add_children(
+                    XBlockFixtureDesc('vertical', 'Test Unit 1').add_children(
+                        XBlockFixtureDesc('html', 'HTML 11'),
+                        XBlockFixtureDesc('html', 'HTML 12')
+                    ),
+                    XBlockFixtureDesc('vertical', 'Test Unit 2').add_children(
+                        XBlockFixtureDesc('html', 'HTML 21'),
+                        XBlockFixtureDesc('html', 'HTML 22')
+                    )
+                )
+            )
+        )
+
+    def test_move(self):
+        """
+        Test if we can move an xblock successfully.
+
+        Given I am a staff user
+        When I go to unit page in first section
+        Then I open the move modal
+        Then I navigate to unit in second section from within move modal
+        Then I see move button is enabled
+        Then I click on the move button
+        Then I see move operation successfull message
+        When I go to unit page in second section
+        Then I see move compoenent there
+        """
+        navigation_options = {
+            'section': 0,
+            'subsection': 0,
+            'unit': 1,
+        }
+        source_xblock_display_name = 'HTML 11'
+        source_xblock_category = 'component'
+        message = 'Success! "{display_name}" has been moved.'.format(display_name=source_xblock_display_name)
+
+        unit_page = self.go_to_unit_page(unit_name='Test Unit 1')
+        components = unit_page.displayed_children
+        self.assertEqual(len(components), 2)
+        components[0].open_move_modal(source_index=0);
+
+        self.move_modal_view.navigate_to_category(source_xblock_category, navigation_options=navigation_options)
+        self.assertEqual(self.move_modal_view.is_move_button_enabled, True)
+        self.move_modal_view.click_move_button()
+
+        self.container.verify_confirmation_message(message)
+        self.assertEqual(len(unit_page.displayed_children), 1)
+
+        unit_page = self.go_to_unit_page(unit_name='Test Unit 2')
+        components = unit_page.displayed_children
+        self.assertEqual(len(components), 3)
+        self.assertEqual(
+            components[2].name, source_xblock_display_name
+        )
+
+    def test_undo_move(self):
+        """
+        Test if we can move an xblock successfully.
+
+        Given I am a staff user
+        When I go to unit page in first section
+        Then I open the move modal
+        Then I click on the move button
+        Then I see move operation successfull message
+        When I clicked on undo move link
+        Then I verified that undo move operation is successfull
+        """
+        navigation_options = {
+            'section': 0,
+            'subsection': 0,
+            'unit': 1,
+        }
+        source_xblock_display_name = 'HTML 11'
+        source_xblock_category = 'component'
+        message_move = 'Success! "{display_name}" has been moved.'.format(display_name=source_xblock_display_name)
+        message_undo = 'Move cancelled. "{display_name}" has been moved back to its original location.'.format(
+            display_name=source_xblock_display_name
+        )
+
+        unit_page = self.go_to_unit_page(unit_name='Test Unit 1')
+        components = unit_page.displayed_children
+        components[0].open_move_modal(source_index=0);
+
+        self.move_modal_view.navigate_to_category(source_xblock_category, navigation_options=navigation_options)
+        self.move_modal_view.click_move_button()
+        self.container.verify_confirmation_message(message_move)
+
+        self.container.click_undo_move_link()
+        self.container.verify_confirmation_message(message_undo)
+
+        components = unit_page.displayed_children
+        self.assertEqual(len(components), 2)
+        self.assertEqual(
+            [component.name for component in components],
+            ['HTML 11', 'HTML 12']
+        )

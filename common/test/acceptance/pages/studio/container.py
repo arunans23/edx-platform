@@ -102,6 +102,13 @@ class ContainerPage(PageObject, HelpMixin):
         return self._get_xblocks(".is-active ")
 
     @property
+    def displayed_children(self):
+        """
+        Return a list of displayed xblocks loaded on the container page.
+        """
+        return self._get_xblocks()[0].children
+
+    @property
     def publish_title(self):
         """
         Returns the title as displayed on the publishing sidebar component.
@@ -262,6 +269,22 @@ class ContainerPage(PageObject, HelpMixin):
         """
         return _click_edit(self, '.edit-button', '.xblock-studio_view')
 
+    def verify_confirmation_message(self, message):
+        """
+        Verify for confirmation message.
+        """
+        def verify_message():
+            text = self.q(css='#page-alert .alert.confirmation #alert-confirmation-title').text
+            return text and message in text[0]
+
+        self.wait_for(verify_message, description='confirmation message present')
+
+    def click_undo_move_link(self):
+        """
+        Verify for confirmation message.
+        """
+        click_css(self, '#page-alert .alert.confirmation .action-undo-move')
+
     def add_missing_groups(self):
         """
         Click the "add missing groups" link.
@@ -382,7 +405,7 @@ class XBlockWrapper(PageObject):
         """
         Will return any first-generation descendant xblocks of this xblock.
         """
-        descendants = self.q(css=self._bounded_selector(self.BODY_SELECTOR)).map(
+        descendants = self.q(css=self._bounded_selector(self.BODY_SELECTOR)).filter(lambda el: el.is_displayed()).map(
             lambda el: XBlockWrapper(self.browser, el.get_attribute('data-locator'))).results
 
         # Now remove any non-direct descendants.
@@ -468,6 +491,13 @@ class XBlockWrapper(PageObject):
         """
         return self.q(css=self._bounded_selector('.visibility-button')).is_present()
 
+    @property
+    def has_move_modal_button(self):
+        """
+        Returns True if this xblock has move modal button else False
+        """
+        return self.q(css=self._bounded_selector('.move-button')).is_present()
+
     def go_to_container(self):
         """
         Open the container page linked to by this xblock, and return
@@ -504,6 +534,18 @@ class XBlockWrapper(PageObject):
         If editing, click on the "Settings" tab
         """
         self._click_button('settings_tab')
+
+    def open_move_modal(self, source_index):
+        """
+        Opens the move modal.
+
+        Arguments:
+            source_index (int): index of the source XBlock
+        """
+        click_css(self, '.move-button', source_index, require_notification=False)
+        self.wait_for(
+            lambda: self.q(css='.modal-window.move-modal').visible, description='move modal is visible'
+        )
 
     def set_field_val(self, field_display_name, field_value):
         """

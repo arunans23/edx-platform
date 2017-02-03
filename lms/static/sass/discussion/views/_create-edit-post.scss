@@ -37,7 +37,6 @@
 
       .field-input {
         display: inline-block;
-        width: 70%;
         vertical-align: top;
         &:not([type="text"]) {
           border-width: 0;
@@ -66,7 +65,7 @@
       line-height: 1.5;
 
       &#field_help_post_type {
-        margin-top: ($baseline / 2) 0 ($baseline / 3) 0;
+        @include margin($baseline / 2, 0, $baseline * 0.75, 0);
       }
 
       &#new-post-editor-description {
@@ -81,7 +80,15 @@
   }
 
   .post-options {
-    margin-bottom: ($baseline/2);
+    margin: $baseline 0;
+
+    .field-label {
+      @include margin-right($baseline);
+    }
+
+    .icon {
+      @include margin-right($baseline / 4);
+    }
   }
 }
 
@@ -139,10 +146,8 @@
 .edit-post-form {
 
   .post-type-label {
-    @include margin(0, $baseline, 0, $baseline / 5);
+    @include margin-right($baseline);
     color: $gray-d3;
-    font-size: $forum-base-font-size;
-    font-weight: 600;
   }
 
   input[type=text].field-input {
@@ -150,6 +155,7 @@
     border: 1px solid $forum-color-border;
     border-radius: $forum-border-radius;
     padding: 0 $baseline/2;
+    width: 70%;
     height: 40px;
     color: #333;
     font-size: $forum-large-font-size;

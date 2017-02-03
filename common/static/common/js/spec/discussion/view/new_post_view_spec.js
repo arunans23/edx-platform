@@ -227,7 +227,7 @@
                 expect($("input[id$='post-type-question']")).not.toBeChecked();
                 expect(view.$('.js-post-title').val()).toEqual('');
                 expect(view.$('.js-post-body textarea').val()).toEqual('');
-                expect(view.$('.js-follow')).toBeChecked();
+                expect(view.$('input[name=follow]')).toBeChecked();
                 expect(view.$('.js-anon')).not.toBeChecked();
                 expect(view.$('.js-anon-peers')).not.toBeChecked();
                 if (mode === 'tab') {

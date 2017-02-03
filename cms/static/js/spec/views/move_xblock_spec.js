@@ -160,7 +160,7 @@ define(['jquery', 'underscore', 'edx-ui-toolkit/js/utils/spec-helpers/ajax-helpe
                     }
                     expect(displayedInfo.forwardButtonSRTexts).toEqual(
                         _.map(_.range(expectedXBlocksCount), function() {
-                            return 'Press button to see ' + category + ' children';
+                            return 'View this ' + category + "'s children";
                         })
                     );
                     expect(displayedInfo.forwardButtonCount).toEqual(expectedXBlocksCount);

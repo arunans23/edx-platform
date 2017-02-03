@@ -1,7 +1,9 @@
 <div class="xblock-items-category">
-    <% // Translators: The complete message will be something like `Showing Subsections/Units/Components` etc. %>
-    <span class="sr"><%- gettext('Showing ') %></span>
-    <span class="category-text">
+    <span class="sr">
+        <% // Translators: The message will be like `Showing Subsections/Units/Components` etc. %>
+        <%- StringUtils.interpolate(gettext("Showing {categoryText}"), {categoryText: categoryText}) %>
+    </span>
+    <span class="category-text" aria-hidden="true">
         <%- categoryText %>:
     </span>
 </div>

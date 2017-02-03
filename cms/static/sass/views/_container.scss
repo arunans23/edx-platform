@@ -353,7 +353,7 @@
         @include font-size(14);
 
         .breadcrumb-fa-icon {
-          @include padding(0, ($baseline/4), 0, ($baseline/4));
+          padding: 0 ($baseline/4);
 
           @include rtl {
             @include transform(rotate(180deg));
@@ -377,9 +377,9 @@
   }
 
   .category-text {
+    @include margin-left($baseline/2);
     @include font-size(14);
     color: #414141;
-    @include margin-left($baseline/2);
   }
 
   .xblock-items-container {
@@ -422,8 +422,8 @@
     }
 
     .xblock-no-child-message {
-      display: block;
       @include text-align(center);
+      display: block;
       padding: ($baseline*2);
     }
   }

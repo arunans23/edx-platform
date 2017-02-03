@@ -29,10 +29,10 @@ function($, Backbone, _, gettext, BaseView, BaseModal, XBlockInfoModel, MoveXBlo
             BaseModal.prototype.initialize.call(this);
             this.listenTo(Backbone, 'move:breadcrumbRendered', this.focusModal);
             this.sourceXBlockInfo = this.options.sourceXBlockInfo;
-            this.XBlockUrlRoot = this.options.XBlockUrlRoot;
-            this.XBlockAncestorInfoUrl = StringUtils.interpolate(
+            this.XBlockURLRoot = this.options.XBlockURLRoot;
+            this.XBlockAncestorInfoURL = StringUtils.interpolate(
                 '{urlRoot}/{usageId}?fields=ancestorInfo',
-                {urlRoot: this.XBlockUrlRoot, usageId: this.sourceXBlockInfo.get('id')}
+                {urlRoot: this.XBlockURLRoot, usageId: this.sourceXBlockInfo.get('id')}
             );
             this.outlineURL = this.options.outlineURL;
             this.options.title = this.getTitle();
@@ -76,7 +76,7 @@ function($, Backbone, _, gettext, BaseView, BaseModal, XBlockInfoModel, MoveXBlo
         fetchCourseOutline: function() {
             return $.when(
                 this.fetchData(this.outlineURL),
-                this.fetchData(this.XBlockAncestorInfoUrl)
+                this.fetchData(this.XBlockAncestorInfoURL)
             );
         },
 

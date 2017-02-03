@@ -17,9 +17,9 @@ define(['jquery', 'underscore', 'edx-ui-toolkit/js/utils/spec-helpers/ajax-helpe
                         display_name: DISPLAY_NAME,
                         category: 'html'
                     }),
-                    XBlockUrlRoot: '/xblock',
+                    XBlockURLRoot: '/xblock',
                     outlineURL: OUTLINE_URL,
-                    XBlockAncestorInfoUrl: ANCESTORS_URL
+                    XBlockAncestorInfoURL: ANCESTORS_URL
 
                 });
                 modal.show();
@@ -53,6 +53,7 @@ define(['jquery', 'underscore', 'edx-ui-toolkit/js/utils/spec-helpers/ajax-helpe
                 var requests = AjaxHelpers.requests(this),
                     renderViewsSpy;
                 showModal();
+                expect(modal.$el.find('.ui-loading.is-hidden')).not.toExist();
                 renderViewsSpy = spyOn(modal, 'renderViews');
                 expect(requests.length).toEqual(2);
                 AjaxHelpers.expectRequest(requests, 'GET', OUTLINE_URL);
@@ -60,6 +61,7 @@ define(['jquery', 'underscore', 'edx-ui-toolkit/js/utils/spec-helpers/ajax-helpe
                 AjaxHelpers.expectRequest(requests, 'GET', ANCESTORS_URL);
                 AjaxHelpers.respondWithJson(requests, {});
                 expect(renderViewsSpy).toHaveBeenCalled();
+                expect(modal.$el.find('.ui-loading.is-hidden')).toExist();
             });
 
             it('shows error notification when fetch course outline request fails', function() {

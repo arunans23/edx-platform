@@ -119,7 +119,7 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
         },
 
         /**
-         * Set parent and childs XBlock categories.
+         * Set parent and child XBlock categories.
          */
         setDisplayedXBlocksCategories: function() {
             this.parentInfo.category = XBlockUtils.getXBlockType(
@@ -174,7 +174,8 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
          */
         getForwardButtonSRText: function() {
             return StringUtils.interpolate(
-                gettext('Press button to see {XBlockCategory} children'),
+                // Translators: Text will read like View this section's children, View this unit's children
+                gettext("View this {XBlockCategory}'s children"),
                 {XBlockCategory: this.childrenInfo.category}
             );
         },

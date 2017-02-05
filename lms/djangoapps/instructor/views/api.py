@@ -2516,7 +2516,7 @@ def send_email(request, course_id):
     - 'subject' specifies email's subject
     - 'message' specifies email's content
     """
-    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course_id = CourseKey.from_string(course_id)
 
     if not BulkEmailFlag.feature_enabled(course_id):
         return HttpResponseForbidden("Email is not enabled for this course.")
@@ -2531,6 +2531,15 @@ def send_email(request, course_id):
     # If these are None (there is no site configuration enabled for the current site) than
     # the system will use normal system defaults
     template_name = configuration_helpers.get_value('course_email_template_name')
+    # COURSE_EMAIL_TEMPLATE_ORG_MAP maps an org to a template name,
+    # so that the course email template can be customized for each organization
+    template_name = configuration_helpers.get_value(
+        'COURSE_EMAIL_TEMPLATE_ORG_MAP',
+        {}
+    ).get(
+        course_id.org,
+        template_name
+    )
     from_addr = configuration_helpers.get_value('course_email_from_addr')
 
     # Create the CourseEmail object.  This is saved immediately, so that
